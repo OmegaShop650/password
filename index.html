@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>Авторизація</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="login-box" id="login-box">
+    <h2>Вхід</h2>
+    <input type="text" id="login" placeholder="Логін (тільки англійські букви)" />
+    <input type="password" id="password" placeholder="Пароль" />
+    <button onclick="login()">Увійти</button>
+    <p id="error" class="error"></p>
+    <p>Немає акаунту? <a href="#" onclick="showRegister()">Зареєструватися</a></p>
+  </div>
+
+  <div class="register-box" id="register-box" style="display:none;">
+    <h2>Реєстрація</h2>
+    <input type="text" id="reg-login" placeholder="Логін" />
+    <input type="password" id="reg-password" placeholder="Пароль" />
+    <input type="password" id="reg-password2" placeholder="Підтвердження пароля" />
+    <button onclick="register()">Зареєструватися</button>
+    <p id="reg-error" class="error"></p>
+    <p>Вже маєш акаунт? <a href="#" onclick="showLogin()">Увійти</a></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
