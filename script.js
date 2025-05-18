@@ -24,23 +24,26 @@ function login() {
   if (users[loginInput] && users[loginInput] === passwordInput) {
     localStorage.setItem("loggedIn", loginInput);
 
-    // Надіслати повідомлення в Telegram про успішний вхід
-    fetch("https://api.telegram.org/bot8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg/sendMessage", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        chat_id: "75187340",
-        text: `Користувач увійшов: ${loginInput}`
-      })
-    });
+    const TOKEN = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
+    const CHAT_ID = "751873408";
+    const message = `Користувач увійшов: ${loginInput}`;
 
+    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`)
+      .then(response => {
+        if (!response.ok) {
+          console.error("Помилка надсилання повідомлення в Telegram:", response.statusText);
+        }
+      })
+      .catch(err => console.error("Помилка мережі:", err));
+
+    alert("Успішний вхід!");
     window.location.href = "success.html";
+
   } else {
     error.textContent = "❌ Неправильний логін або пароль.";
   }
 }
+
 
 function register() {
   const loginInput = document.getElementById("reg-login").value.trim().toLowerCase();
