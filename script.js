@@ -134,3 +134,8 @@ function handleCredentialResponse(response) {
   alert("✅ Успішний вхід через Google!");
   window.location.href = "success.html";
 }
+function handleCredentialResponse(response) {
+  localStorage.setItem('loggedInGoogleToken', response.credential);
+  window.location.href = "success.html";
+}
+
