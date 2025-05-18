@@ -101,6 +101,16 @@
           })
         });
 
+<!-- ... у секції входу -->
+<p>Або увійдіть через Google:</p>
+<div id="g_id_onload"
+     data-client_id="408505306218-8ae6o2bsr8k3pvm3g772le0eee2oujik.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse"
+     data-auto_prompt="false">
+</div>
+<div class="g_id_signin" data-type="icon" data-size="small"></div>
+
+
         window.location.href = "success.html";
       } else {
         error.textContent = "❌ Неправильний логін або пароль.";
