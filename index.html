@@ -4,48 +4,181 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Авторизація | OmegaShop</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Підключення Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <div class="container">
+    <!-- Вхід -->
     <div class="box" id="login-box">
       <h2>Вхід</h2>
-      <input type="text" id="login" placeholder="Логін (англ. літери)" />
-      <input type="password" id="password" placeholder="Пароль" />
+      <input type="text" id="login" placeholder="Логін (тільки англ букви)" autocomplete="username" />
+      <input type="password" id="password" placeholder="Пароль" autocomplete="current-password" />
       <button onclick="login()">Увійти</button>
+      <p class="error" id="error"></p>
+      <p class="switch-text">
+        Немає акаунту? <a href="#" onclick="showRegister(event)">Зареєструватися</a>
+      </p>
+
+      <p>Або увійдіть через Google:</p>
+      <!-- Google Sign-In кнопка -->
       <div id="g_id_onload"
            data-client_id="408505306218-8ae6o2bsr8k3pvm3g772le0eee2oujik.apps.googleusercontent.com"
            data-callback="handleCredentialResponse"
            data-auto_prompt="false">
       </div>
       <div class="g_id_signin" data-type="standard"></div>
-      <p><a href="#" onclick="showResetForm(event)">Забули пароль?</a></p>
-      <p class="error" id="error"></p>
-      <p class="switch-text">Немає акаунту? <a href="#" onclick="showRegister(event)">Зареєструватися</a></p>
     </div>
 
+    <!-- Реєстрація -->
     <div class="box" id="register-box" style="display:none;">
       <h2>Реєстрація</h2>
-      <input type="email" id="reg-email" placeholder="Email" />
-      <input type="text" id="reg-login" placeholder="Логін (англ. літери)" />
-      <input type="password" id="reg-password" placeholder="Пароль" />
-      <input type="password" id="reg-password2" placeholder="Підтвердження пароля" />
+      <input type="email" id="reg-email" placeholder="Email" autocomplete="email" />
+      <input type="text" id="reg-login" placeholder="Логін (тільки англ букви)" autocomplete="username" />
+      <input type="password" id="reg-password" placeholder="Пароль" autocomplete="new-password" />
+      <input type="password" id="reg-password2" placeholder="Підтвердження пароля" autocomplete="new-password" />
       <button onclick="register()">Зареєструватися</button>
       <p class="error" id="reg-error"></p>
-      <p class="switch-text">Вже маєш акаунт? <a href="#" onclick="showLogin(event)">Увійти</a></p>
-    </div>
-
-    <div class="box" id="reset-box" style="display:none;">
-      <h2>Скидання пароля</h2>
-      <input type="email" id="reset-email" placeholder="Email" />
-      <button onclick="resetPassword()">Надіслати посилання для скидання</button>
-      <p class="error" id="reset-error"></p>
-      <p class="switch-text"><a href="#" onclick="showLogin(event)">Назад до входу</a></p>
+      <p class="switch-text">
+        Вже маєш акаунт? <a href="#" onclick="showLogin(event)">Увійти</a>
+      </p>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    // Фільтрація логіна (тільки англійські літери)
+    function filterLoginInput(input) {
+      return input.replace(/[^a-zA-Z]/g, '');
+    }
+
+    document.getElementById('login').addEventListener('input', function (e) {
+      const filtered = filterLoginInput(e.target.value);
+      if (e.target.value !== filtered) {
+        e.target.value = filtered;
+      }
+    });
+
+    document.getElementById('reg-login').addEventListener('input', function (e) {
+      const filtered = filterLoginInput(e.target.value);
+      if (e.target.value !== filtered) {
+        e.target.value = filtered;
+      }
+    });
+
+    // Вхід користувача
+    function login() {
+      const loginInput = document.getElementById("login").value.trim().toLowerCase();
+      const passwordInput = document.getElementById("password").value.trim();
+      const error = document.getElementById("error");
+
+      if (!/^[a-z]+$/.test(loginInput)) {
+        error.textContent = "Логін має містити тільки англійські літери!";
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem("users")) || {};
+
+      if (users[loginInput] && users[loginInput] === passwordInput) {
+        localStorage.setItem("loggedIn", loginInput);
+
+        // 🔔 Надіслати повідомлення в Telegram
+        const token = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
+        const chat_id = "751873408";
+        const message = `🔐 Користувач увійшов: ${loginInput}`;
+
+        fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            chat_id: chat_id,
+            text: message
+          })
+        });
+
+        window.location.href = "success.html";
+      } else {
+        error.textContent = "❌ Неправильний логін або пароль.";
+      }
+    }
+
+    // Реєстрація користувача
+    function register() {
+      const emailInput = document.getElementById("reg-email").value.trim().toLowerCase();
+      const loginInput = document.getElementById("reg-login").value.trim().toLowerCase();
+      const passwordInput = document.getElementById("reg-password").value.trim();
+      const password2Input = document.getElementById("reg-password2").value.trim();
+      const error = document.getElementById("reg-error");
+
+      if (!emailInput || !loginInput || !passwordInput || !password2Input) {
+        error.textContent = "❌ Всі поля мають бути заповнені.";
+        return;
+      }
+
+      // Просте перевірка email
+      if (!emailInput.includes("@")) {
+        error.textContent = "❌ Некоректна email адреса.";
+        return;
+      }
+
+      if (!/^[a-z]+$/.test(loginInput)) {
+        error.textContent = "Логін має містити тільки англійські літери!";
+        return;
+      }
+
+      if (passwordInput !== password2Input) {
+        error.textContent = "❌ Паролі не співпадають.";
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem("users")) || {};
+
+      if (users[loginInput]) {
+        error.textContent = "❌ Цей логін вже використовується.";
+        return;
+      }
+
+      // Зберігаємо не тільки пароль, а й email
+      users[loginInput] = { password: passwordInput, email: emailInput };
+      localStorage.setItem("users", JSON.stringify(users));
+
+      alert("✅ Реєстрація пройшла успішно! Тепер увійдіть.");
+      showLogin();
+    }
+
+    // Переключення між формами
+    function showRegister(event) {
+      if(event) event.preventDefault();
+      document.getElementById("login-box").style.display = "none";
+      document.getElementById("register-box").style.display = "block";
+      clearErrors();
+    }
+
+    function showLogin(event) {
+      if(event) event.preventDefault();
+      document.getElementById("login-box").style.display = "block";
+      document.getElementById("register-box").style.display = "none";
+      clearErrors();
+    }
+
+    // Очистка повідомлень про помилки
+    function clearErrors() {
+      document.getElementById("error").textContent = "";
+      document.getElementById("reg-error").textContent = "";
+    }
+
+    // Google Sign-In обробка
+    function handleCredentialResponse(response) {
+      // Тут можна обробити JWT токен (response.credential)
+      alert("Google Sign-In успішний! Токен: " + response.credential);
+      localStorage.setItem('loggedInGoogleToken', response.credential);
+      window.location.href = "success.html";
+    }
+  </script>
 </body>
 </html>
