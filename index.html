@@ -19,7 +19,7 @@
         Немає акаунту? <a href="#" onclick="showRegister()">Зареєструватися</a>
       </p>
       <p class="switch-text">
-        Забули пароль? <a href="#" onclick="showReset()">Відновити</a>
+        Забули пароль? <a href="#" onclick="showForgot()">Скинути пароль</a>
       </p>
     </div>
 
@@ -36,18 +36,17 @@
       </p>
     </div>
 
-    <div class="box" id="reset-box" style="display:none;">
+    <div class="box" id="forgot-box" style="display:none;">
       <h2>Відновлення пароля</h2>
-      <input type="email" id="reset-email" placeholder="Email" />
-      <input type="password" id="reset-password" placeholder="Новий пароль" />
-      <button onclick="resetPassword()">Відновити пароль</button>
-      <p class="error" id="reset-error"></p>
+      <input type="email" id="forgot-email" placeholder="Введіть свій email" />
+      <button onclick="resetPassword()">Скинути пароль</button>
+      <p class="error" id="forgot-error"></p>
       <p class="switch-text">
-        Згадали пароль? <a href="#" onclick="showLogin()">Увійти</a>
+        Памʼятаєш пароль? <a href="#" onclick="showLogin()">Увійти</a>
       </p>
     </div>
   </div>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
