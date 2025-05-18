@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Авторизація | OmegaShop</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
@@ -16,7 +16,10 @@
       <button onclick="login()">Увійти</button>
       <p class="error" id="error"></p>
       <p class="switch-text">
-        Немає акаунту? <a href="#" onclick="showRegister(event)">Зареєструватися</a>
+        Немає акаунту? <a href="#" onclick="showRegister()">Зареєструватися</a>
+      </p>
+      <p class="switch-text">
+        Забули пароль? <a href="#" onclick="showReset()">Відновити</a>
       </p>
     </div>
 
@@ -29,7 +32,18 @@
       <button onclick="register()">Зареєструватися</button>
       <p class="error" id="reg-error"></p>
       <p class="switch-text">
-        Вже маєш акаунт? <a href="#" onclick="showLogin(event)">Увійти</a>
+        Вже маєш акаунт? <a href="#" onclick="showLogin()">Увійти</a>
+      </p>
+    </div>
+
+    <div class="box" id="reset-box" style="display:none;">
+      <h2>Відновлення пароля</h2>
+      <input type="email" id="reset-email" placeholder="Email" />
+      <input type="password" id="reset-password" placeholder="Новий пароль" />
+      <button onclick="resetPassword()">Відновити пароль</button>
+      <p class="error" id="reset-error"></p>
+      <p class="switch-text">
+        Згадали пароль? <a href="#" onclick="showLogin()">Увійти</a>
       </p>
     </div>
   </div>
