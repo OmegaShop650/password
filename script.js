@@ -8,6 +8,15 @@ document.getElementById('login').addEventListener('input', function (e) {
     e.target.value = filtered;
   }
 });
+// Google OAuth callback
+function handleCredentialResponse(response) {
+  const id_token = response.credential;
+  console.log("Google ID Token:", id_token);
+  alert("✅ Успішний вхід через Google!");
+  window.location.href = "success.html";
+}
+
+// Інші твої функції (login, register, showLogin, showRegister тощо)
 
 function login() {
   const loginInput = document.getElementById("login").value.trim().toLowerCase();
@@ -125,17 +134,5 @@ function clearErrors() {
   document.getElementById("error").textContent = "";
   document.getElementById("reg-error").textContent = "";
   document.getElementById("reset-error").textContent = "";
-}
-
-// Google OAuth callback
-function handleCredentialResponse(response) {
-  const id_token = response.credential;
-  console.log("Google ID Token:", id_token);
-  alert("✅ Успішний вхід через Google!");
-  window.location.href = "success.html";
-}
-function handleCredentialResponse(response) {
-  localStorage.setItem('loggedInGoogleToken', response.credential);
-  window.location.href = "success.html";
 }
 
