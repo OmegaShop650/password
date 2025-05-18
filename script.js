@@ -23,6 +23,19 @@ function login() {
 
   if (users[loginInput] && users[loginInput] === passwordInput) {
     localStorage.setItem("loggedIn", loginInput);
+
+    // Надіслати повідомлення в Telegram про успішний вхід
+    fetch("https://api.telegram.org/bot8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg/sendMessage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        chat_id: "75187340",
+        text: `Користувач увійшов: ${loginInput}`
+      })
+    });
+
     window.location.href = "success.html";
   } else {
     error.textContent = "❌ Неправильний логін або пароль.";
