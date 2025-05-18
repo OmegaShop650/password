@@ -1,3 +1,4 @@
+// Фільтрація логіна (тільки англійські літери)
 function filterLoginInput(input) {
   return input.replace(/[^a-zA-Z]/g, '');
 }
@@ -9,6 +10,7 @@ document.getElementById('login').addEventListener('input', function (e) {
   }
 });
 
+// Вхід користувача
 function login() {
   const loginInput = document.getElementById("login").value.trim().toLowerCase();
   const passwordInput = document.getElementById("password").value.trim();
@@ -24,27 +26,29 @@ function login() {
   if (users[loginInput] && users[loginInput] === passwordInput) {
     localStorage.setItem("loggedIn", loginInput);
 
-    const TOKEN = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
-    const CHAT_ID = "751873408";
-    const message = `Користувач увійшов: ${loginInput}`;
+    // 🔔 Надіслати повідомлення в Telegram
+    const token = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
+    const chat_id = "751873408";
+    const message = `🔐 Користувач увійшов: ${loginInput}`;
 
-    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`)
-      .then(response => {
-        if (!response.ok) {
-          console.error("Помилка надсилання повідомлення в Telegram:", response.statusText);
-        }
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        chat_id: chat_id,
+        text: message
       })
-      .catch(err => console.error("Помилка мережі:", err));
+    });
 
-    alert("Успішний вхід!");
     window.location.href = "success.html";
-
   } else {
     error.textContent = "❌ Неправильний логін або пароль.";
   }
 }
 
-
+// Реєстрація користувача
 function register() {
   const loginInput = document.getElementById("reg-login").value.trim().toLowerCase();
   const passwordInput = document.getElementById("reg-password").value.trim();
@@ -70,10 +74,11 @@ function register() {
   users[loginInput] = passwordInput;
   localStorage.setItem("users", JSON.stringify(users));
 
-  alert("Реєстрація пройшла успішно! Тепер увійдіть.");
+  alert("✅ Реєстрація пройшла успішно! Тепер увійдіть.");
   showLogin();
 }
 
+// Переключення між формами
 function showRegister() {
   document.getElementById("login-box").style.display = "none";
   document.getElementById("register-box").style.display = "block";
@@ -86,6 +91,7 @@ function showLogin() {
   clearErrors();
 }
 
+// Очистка повідомлень про помилки
 function clearErrors() {
   document.getElementById("error").textContent = "";
   document.getElementById("reg-error").textContent = "";
