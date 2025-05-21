@@ -6,58 +6,60 @@
   <title>Успішний вхід | OmegaShop</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
   <style>
-    /* Основний стиль сторінки */
+    /* Базовий стиль сторінки */
     body {
+      margin: 0;
+      height: 100vh;
       font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #4c00ff, #6a1bff);
-      height: 100vh;
-      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #fff;
+      color: white;
       overflow: hidden;
     }
 
     .container {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 40px 60px;
-      border-radius: 15px;
-      box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
-      text-align: center;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 40px 50px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
       max-width: 400px;
-      animation: fadeInScale 1s ease forwards;
+      width: 90%;
+      text-align: center;
+      animation: fadeInScale 0.8s ease forwards;
     }
 
     h1 {
-      font-size: 2.8rem;
-      margin-bottom: 15px;
+      font-size: 3rem;
+      margin-bottom: 20px;
       letter-spacing: 1.5px;
-      animation: slideInFromTop 1s ease forwards;
+      animation: slideInTop 0.7s ease forwards;
     }
 
     #welcome-message {
-      font-size: 1.4rem;
-      margin-bottom: 25px;
-      min-height: 50px;
-      animation: fadeInText 2s ease forwards;
+      font-size: 1.5rem;
+      min-height: 60px;
+      margin-bottom: 30px;
+      animation: fadeInText 1.5s ease forwards;
     }
 
-    /* Кнопка вийти */
     button {
       background-color: #6a1bff;
       border: none;
-      padding: 12px 30px;
       border-radius: 30px;
-      color: white;
+      padding: 14px 40px;
+      font-size: 1.1rem;
       font-weight: 600;
+      color: white;
       cursor: pointer;
-      font-size: 1rem;
-      box-shadow: 0 8px 15px rgba(106, 27, 255, 0.4);
-      transition: background-color 0.3s ease;
+      box-shadow: 0 8px 20px rgba(106, 27, 255, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
+
     button:hover {
       background-color: #4c00ff;
+      box-shadow: 0 10px 30px rgba(76, 0, 255, 0.7);
     }
 
     /* Анімації */
@@ -72,10 +74,10 @@
       }
     }
 
-    @keyframes slideInFromTop {
+    @keyframes slideInTop {
       0% {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(-40px);
       }
       100% {
         opacity: 1;
@@ -96,30 +98,31 @@
 <body>
   <div class="container">
     <h1>Вхід успішний!</h1>
-    <p id="welcome-message"></p>
+    <p id="welcome-message">Завантаження...</p>
     <button onclick="logout()">Вийти</button>
   </div>
 
   <script>
-    // Відображення імені користувача
-    const googleName = localStorage.getItem('loggedInGoogleName');
-    const login = localStorage.getItem('loggedIn');
+    // Отримуємо ім'я користувача або логін із localStorage
     const welcomeMessage = document.getElementById('welcome-message');
+
+    const googleName = localStorage.getItem('loggedInGoogleName');
+    const loginName = localStorage.getItem('loggedIn');
 
     if (googleName) {
       welcomeMessage.textContent = `Вітаємо, ${googleName}! Ви увійшли через Google.`;
-    } else if (login) {
-      welcomeMessage.textContent = `Вітаємо, ${login}! Ви увійшли.`;
+    } else if (loginName) {
+      welcomeMessage.textContent = `Вітаємо, ${loginName}! Ви увійшли.`;
     } else {
       welcomeMessage.textContent = "Ви не увійшли.";
     }
 
-    // Функція виходу
+    // Функція виходу — очищає localStorage і повертає на сторінку входу
     function logout() {
       localStorage.removeItem('loggedInGoogleToken');
       localStorage.removeItem('loggedInGoogleName');
       localStorage.removeItem('loggedIn');
-      window.location.href = "index.html"; // або на головну сторінку входу
+      window.location.href = "index.html"; // заміни на свою сторінку входу
     }
   </script>
 </body>
