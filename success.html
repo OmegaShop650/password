@@ -2,25 +2,124 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Успішний вхід | OmegaShop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <style>
+    /* Основний стиль сторінки */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #4c00ff, #6a1bff);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 40px 60px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+      text-align: center;
+      max-width: 400px;
+      animation: fadeInScale 1s ease forwards;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 15px;
+      letter-spacing: 1.5px;
+      animation: slideInFromTop 1s ease forwards;
+    }
+
+    #welcome-message {
+      font-size: 1.4rem;
+      margin-bottom: 25px;
+      min-height: 50px;
+      animation: fadeInText 2s ease forwards;
+    }
+
+    /* Кнопка вийти */
+    button {
+      background-color: #6a1bff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 30px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 8px 15px rgba(106, 27, 255, 0.4);
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #4c00ff;
+    }
+
+    /* Анімації */
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes slideInFromTop {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInText {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Успішний вхід!</h1>
-  <p id="welcome-message"></p>
+  <div class="container">
+    <h1>Вхід успішний!</h1>
+    <p id="welcome-message"></p>
+    <button onclick="logout()">Вийти</button>
+  </div>
 
   <script>
-    // Якщо користувач увійшов через Google
+    // Відображення імені користувача
     const googleName = localStorage.getItem('loggedInGoogleName');
+    const login = localStorage.getItem('loggedIn');
+    const welcomeMessage = document.getElementById('welcome-message');
+
     if (googleName) {
-      document.getElementById('welcome-message').textContent = `Вітаємо, ${googleName}! Ви увійшли через Google.`;
+      welcomeMessage.textContent = `Вітаємо, ${googleName}! Ви увійшли через Google.`;
+    } else if (login) {
+      welcomeMessage.textContent = `Вітаємо, ${login}! Ви увійшли.`;
     } else {
-      // Якщо увійшов через локальний логін
-      const login = localStorage.getItem('loggedIn');
-      if (login) {
-        document.getElementById('welcome-message').textContent = `Вітаємо, ${login}! Ви увійшли.`;
-      } else {
-        document.getElementById('welcome-message').textContent = "Ви не увійшли.";
-      }
+      welcomeMessage.textContent = "Ви не увійшли.";
+    }
+
+    // Функція виходу
+    function logout() {
+      localStorage.removeItem('loggedInGoogleToken');
+      localStorage.removeItem('loggedInGoogleName');
+      localStorage.removeItem('loggedIn');
+      window.location.href = "index.html"; // або на головну сторінку входу
     }
   </script>
 </body>
