@@ -1,4 +1,3 @@
-// Фільтрація логіна (тільки англ літери)
 function filterLoginInput(input) {
   return input.replace(/[^a-zA-Z]/g, '');
 }
@@ -10,16 +9,18 @@ document.getElementById('login').addEventListener('input', function (e) {
   }
 });
 
-// Google OAuth callback (має бути глобально)
 function handleCredentialResponse(response) {
-  const id_token = response.credential;
-  console.log("Google ID Token:", id_token);
-  alert("✅ Успішний вхід через Google!");
-  localStorage.setItem('loggedInGoogleToken', id_token);
-  window.location.href = "success.html";
+  const token = response.credential;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const name = payload.name || "Користувач";
+    document.getElementById("status").innerText = `Вхід як ${name}`;
+  } catch (e) {
+    document.getElementById("status").innerText = "Помилка при вході через Google.";
+  }
 }
 
-// Вхід користувача (локальний логін)
+
 function login() {
   const loginInput = document.getElementById("login").value.trim().toLowerCase();
   const passwordInput = document.getElementById("password").value.trim();
@@ -35,7 +36,6 @@ function login() {
   if (users[loginInput] && users[loginInput] === passwordInput) {
     localStorage.setItem("loggedIn", loginInput);
 
-    // Telegram повідомлення (можна вимкнути, якщо не потрібно)
     const token = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
     const chat_id = "751873408";
     const message = `🔐 Користувач увійшов: ${loginInput}`;
@@ -52,7 +52,6 @@ function login() {
   }
 }
 
-// Реєстрація користувача
 function register() {
   const loginInput = document.getElementById("reg-login").value.trim().toLowerCase();
   const passwordInput = document.getElementById("reg-password").value.trim();
@@ -82,7 +81,6 @@ function register() {
     return;
   }
 
-  // Зберігаємо користувача у форматі {password, email}
   users[loginInput] = { password: passwordInput, email: emailInput };
   localStorage.setItem("users", JSON.stringify(users));
 
@@ -90,13 +88,11 @@ function register() {
   showLogin();
 }
 
-// Перевірка валідності email
 function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
 }
 
-// Переключення між формами
 function showRegister(event) {
   if (event) event.preventDefault();
   document.getElementById("login-box").style.display = "none";
@@ -111,7 +107,6 @@ function showLogin(event) {
   clearErrors();
 }
 
-// Очистка повідомлень про помилки
 function clearErrors() {
   document.getElementById("error").textContent = "";
   document.getElementById("reg-error").textContent = "";
