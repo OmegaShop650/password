@@ -6,12 +6,14 @@
   <title>Успішний вхід | OmegaShop</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
   <style>
-    /* Базовий стиль сторінки */
     body {
       margin: 0;
       height: 100vh;
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #4c00ff, #6a1bff);
+      /* Яскравіший градієнт з відтінками фіолетового і синього */
+      background: linear-gradient(135deg, #7b2ff7, #f107a3, #17ead9);
+      background-size: 600% 600%;
+      animation: gradientAnimation 15s ease infinite;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -19,11 +21,17 @@
       overflow: hidden;
     }
 
+    @keyframes gradientAnimation {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
     .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 40px 50px;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 45px 55px;
       border-radius: 20px;
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 40px rgba(241, 7, 163, 0.6);
       max-width: 400px;
       width: 90%;
       text-align: center;
@@ -35,6 +43,7 @@
       margin-bottom: 20px;
       letter-spacing: 1.5px;
       animation: slideInTop 0.7s ease forwards;
+      text-shadow: 0 0 10px #f107a3, 0 0 20px #f107a3;
     }
 
     #welcome-message {
@@ -42,10 +51,11 @@
       min-height: 60px;
       margin-bottom: 30px;
       animation: fadeInText 1.5s ease forwards;
+      text-shadow: 0 0 8px #17ead9;
     }
 
     button {
-      background-color: #6a1bff;
+      background-color: #f107a3;
       border: none;
       border-radius: 30px;
       padding: 14px 40px;
@@ -53,16 +63,15 @@
       font-weight: 600;
       color: white;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(106, 27, 255, 0.5);
+      box-shadow: 0 8px 25px rgba(241, 7, 163, 0.7);
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     button:hover {
-      background-color: #4c00ff;
-      box-shadow: 0 10px 30px rgba(76, 0, 255, 0.7);
+      background-color: #d0007a;
+      box-shadow: 0 10px 30px rgba(208, 0, 122, 0.9);
     }
 
-    /* Анімації */
     @keyframes fadeInScale {
       0% {
         opacity: 0;
@@ -103,7 +112,6 @@
   </div>
 
   <script>
-    // Отримуємо ім'я користувача або логін із localStorage
     const welcomeMessage = document.getElementById('welcome-message');
 
     const googleName = localStorage.getItem('loggedInGoogleName');
@@ -117,12 +125,11 @@
       welcomeMessage.textContent = "Ви не увійшли.";
     }
 
-    // Функція виходу — очищає localStorage і повертає на сторінку входу
     function logout() {
       localStorage.removeItem('loggedInGoogleToken');
       localStorage.removeItem('loggedInGoogleName');
       localStorage.removeItem('loggedIn');
-      window.location.href = "index.html"; // заміни на свою сторінку входу
+      window.location.href = "index.html";
     }
   </script>
 </body>
