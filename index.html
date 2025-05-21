@@ -82,10 +82,11 @@
 
       let users = JSON.parse(localStorage.getItem("users")) || {};
 
-      if (users[loginInput] && users[loginInput] === passwordInput) {
+      // users зберігаються у форматі {login: {password: ..., email: ...}}
+      if (users[loginInput] && users[loginInput].password === passwordInput) {
         localStorage.setItem("loggedIn", loginInput);
 
-        // 🔔 Надіслати повідомлення в Telegram
+        // Telegram повідомлення (можна вимкнути, якщо не потрібно)
         const token = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
         const chat_id = "751873408";
         const message = `🔐 Користувач увійшов: ${loginInput}`;
@@ -100,16 +101,6 @@
             text: message
           })
         });
-
-<!-- ... у секції входу -->
-<p>Або увійдіть через Google:</p>
-<div id="g_id_onload"
-     data-client_id="408505306218-8ae6o2bsr8k3pvm3g772le0eee2oujik.apps.googleusercontent.com"
-     data-callback="handleCredentialResponse"
-     data-auto_prompt="false">
-</div>
-<div class="g_id_signin" data-type="icon" data-size="small"></div>
-
 
         window.location.href = "success.html";
       } else {
@@ -131,7 +122,7 @@
       }
 
       // Просте перевірка email
-      if (!emailInput.includes("@")) {
+      if (!validateEmail(emailInput)) {
         error.textContent = "❌ Некоректна email адреса.";
         return;
       }
@@ -153,12 +144,18 @@
         return;
       }
 
-      // Зберігаємо не тільки пароль, а й email
+      // Зберігаємо користувача у форматі {password, email}
       users[loginInput] = { password: passwordInput, email: emailInput };
       localStorage.setItem("users", JSON.stringify(users));
 
       alert("✅ Реєстрація пройшла успішно! Тепер увійдіть.");
       showLogin();
+    }
+
+    // Перевірка валідності email
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
     }
 
     // Переключення між формами
