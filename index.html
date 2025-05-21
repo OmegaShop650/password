@@ -8,12 +8,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Підключення Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <div class="container">
-    <!-- Вхід -->
     <div class="box" id="login-box">
       <h2>Вхід</h2>
       <input type="text" id="login" placeholder="Логін (тільки англ букви)" autocomplete="username" />
@@ -25,7 +23,6 @@
       </p>
 
       <p>Або увійдіть через Google:</p>
-      <!-- Google Sign-In кнопка -->
       <div id="g_id_onload"
            data-client_id="408505306218-8ae6o2bsr8k3pvm3g772le0eee2oujik.apps.googleusercontent.com"
            data-callback="handleCredentialResponse"
@@ -34,7 +31,6 @@
       <div class="g_id_signin" data-type="standard"></div>
     </div>
 
-    <!-- Реєстрація -->
     <div class="box" id="register-box" style="display:none;">
       <h2>Реєстрація</h2>
       <input type="email" id="reg-email" placeholder="Email" autocomplete="email" />
@@ -50,7 +46,6 @@
   </div>
 
   <script>
-    // Фільтрація логіна (тільки англійські літери)
     function filterLoginInput(input) {
       return input.replace(/[^a-zA-Z]/g, '');
     }
@@ -69,7 +64,6 @@
       }
     });
 
-    // Вхід користувача через форму
     function login() {
       const loginInput = document.getElementById("login").value.trim().toLowerCase();
       const passwordInput = document.getElementById("password").value.trim();
@@ -82,24 +76,18 @@
 
       let users = JSON.parse(localStorage.getItem("users")) || {};
 
-      // users зберігаються у форматі {login: {password: ..., email: ...}}
       if (users[loginInput] && users[loginInput].password === passwordInput) {
         localStorage.setItem("loggedIn", loginInput);
 
-        // Telegram повідомлення (можна вимкнути, якщо не потрібно)
+        // Telegram повідомлення (опціонально)
         const token = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
         const chat_id = "751873408";
         const message = `🔐 Користувач увійшов: ${loginInput}`;
 
         fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            chat_id: chat_id,
-            text: message
-          })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chat_id: chat_id, text: message })
         });
 
         window.location.href = "success.html";
@@ -108,7 +96,6 @@
       }
     }
 
-    // Реєстрація користувача
     function register() {
       const emailInput = document.getElementById("reg-email").value.trim().toLowerCase();
       const loginInput = document.getElementById("reg-login").value.trim().toLowerCase();
@@ -121,7 +108,6 @@
         return;
       }
 
-      // Просте перевірка email
       if (!validateEmail(emailInput)) {
         error.textContent = "❌ Некоректна email адреса.";
         return;
@@ -144,7 +130,6 @@
         return;
       }
 
-      // Зберігаємо користувача у форматі {password, email}
       users[loginInput] = { password: passwordInput, email: emailInput };
       localStorage.setItem("users", JSON.stringify(users));
 
@@ -152,13 +137,11 @@
       showLogin();
     }
 
-    // Перевірка валідності email
     function validateEmail(email) {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
     }
 
-    // Переключення між формами
     function showRegister(event) {
       if(event) event.preventDefault();
       document.getElementById("login-box").style.display = "none";
@@ -173,19 +156,43 @@
       clearErrors();
     }
 
-    // Очистка повідомлень про помилки
     function clearErrors() {
       document.getElementById("error").textContent = "";
       document.getElementById("reg-error").textContent = "";
     }
 
-    // Google Sign-In обробка
+    // Розшифруємо payload JWT токена (тільки для відображення імені)
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
     function handleCredentialResponse(response) {
-      console.log("Google Sign-In успішний! Токен:", response.credential);
+      if (!response.credential) {
+        alert("Помилка: немає токена від Google.");
+        return;
+      }
+
+      // Зберігаємо токен
       localStorage.setItem('loggedInGoogleToken', response.credential);
 
-      // Тут можна додати перевірку JWT токена або додаткову логіку
+      // Розшифровуємо ім'я користувача
+      const payload = parseJwt(response.credential);
 
+      if(payload && payload.name) {
+        localStorage.setItem('loggedInGoogleName', payload.name);
+      }
+
+      // Переадресація на сторінку успішного входу
       window.location.href = "success.html";
     }
   </script>
