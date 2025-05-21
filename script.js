@@ -14,26 +14,10 @@ function handleCredentialResponse(response) {
     const token = response.credential;
     const payload = JSON.parse(atob(token.split('.')[1]));
     const name = payload.name || "Користувач";
-
-    // Перевіряємо, чи цей Google токен вже був раніше
-    let loggedGoogleTokens = JSON.parse(localStorage.getItem('loggedGoogleTokens') || '[]');
-    if (!loggedGoogleTokens.includes(token)) {
-      // Якщо токен новий — надсилаємо повідомлення
-      const botToken = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
-      const chat_id = "751873408";
-      const message = `🔐 Користувач увійшов через Google: ${name}`;
-
-      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chat_id, text: message })
-      });
-
-      loggedGoogleTokens.push(token);
-      localStorage.setItem('loggedGoogleTokens', JSON.stringify(loggedGoogleTokens));
-    }
-
+    document.getElementById("status").innerText = `Вхід як ${name}`;
     localStorage.setItem('loggedInGoogleToken', token);
+
+    history.replaceState(null, null, window.location.pathname);
 
     window.location.href = "success.html";
   } catch (e) {
@@ -53,12 +37,15 @@ function login() {
 
   let users = JSON.parse(localStorage.getItem("users")) || {};
 
+  // Перевіряємо чи є користувач і чи співпадає пароль
   if (users[loginInput] && users[loginInput].password === passwordInput) {
     localStorage.setItem("loggedIn", loginInput);
 
-    // Перевірка, чи повідомлення вже надсилалось раніше для цього користувача
+    // Отримуємо список користувачів, які вже отримали повідомлення
     let loggedInUsers = JSON.parse(localStorage.getItem('loggedInUsers') || '[]');
+
     if (!loggedInUsers.includes(loginInput)) {
+      // Надсилаємо повідомлення в Telegram (тільки при першому вході)
       const botToken = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
       const chat_id = "751873408";
       const message = `🔐 Користувач увійшов: ${loginInput}`;
@@ -69,6 +56,7 @@ function login() {
         body: JSON.stringify({ chat_id: chat_id, text: message })
       });
 
+      // Додаємо користувача у список
       loggedInUsers.push(loginInput);
       localStorage.setItem('loggedInUsers', JSON.stringify(loggedInUsers));
     }
@@ -83,16 +71,10 @@ function register() {
   const loginInput = document.getElementById("reg-login").value.trim().toLowerCase();
   const passwordInput = document.getElementById("reg-password").value.trim();
   const password2Input = document.getElementById("reg-password2").value.trim();
-  const emailInput = document.getElementById("reg-email").value.trim();
   const error = document.getElementById("reg-error");
 
-  if (!loginInput || !passwordInput || !password2Input || !emailInput) {
+  if (!loginInput || !passwordInput || !password2Input) {
     error.textContent = "❌ Всі поля мають бути заповнені.";
-    return;
-  }
-
-  if (!validateEmail(emailInput)) {
-    error.textContent = "❌ Введіть коректний Email.";
     return;
   }
 
@@ -108,16 +90,11 @@ function register() {
     return;
   }
 
-  users[loginInput] = { password: passwordInput, email: emailInput };
+  users[loginInput] = { password: passwordInput };
   localStorage.setItem("users", JSON.stringify(users));
 
   alert("✅ Реєстрація пройшла успішно! Тепер увійдіть.");
   showLogin();
-}
-
-function validateEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
 }
 
 function showRegister(event) {
