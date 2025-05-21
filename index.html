@@ -69,7 +69,7 @@
       }
     });
 
-    // Вхід користувача
+    // Вхід користувача через форму
     function login() {
       const loginInput = document.getElementById("login").value.trim().toLowerCase();
       const passwordInput = document.getElementById("password").value.trim();
@@ -181,9 +181,11 @@
 
     // Google Sign-In обробка
     function handleCredentialResponse(response) {
-      // Тут можна обробити JWT токен (response.credential)
-      alert("Google Sign-In успішний! Токен: " + response.credential);
+      console.log("Google Sign-In успішний! Токен:", response.credential);
       localStorage.setItem('loggedInGoogleToken', response.credential);
+
+      // Тут можна додати перевірку JWT токена або додаткову логіку
+
       window.location.href = "success.html";
     }
   </script>
