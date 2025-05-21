@@ -14,18 +14,32 @@ function handleCredentialResponse(response) {
     const token = response.credential;
     const payload = JSON.parse(atob(token.split('.')[1]));
     const name = payload.name || "Користувач";
-    document.getElementById("status").innerText = `Вхід як ${name}`;
-    localStorage.setItem('loggedInGoogleToken', token);
 
-    history.replaceState(null, null, window.location.pathname);
+    // Перевіряємо, чи цей Google токен вже був раніше
+    let loggedGoogleTokens = JSON.parse(localStorage.getItem('loggedGoogleTokens') || '[]');
+    if (!loggedGoogleTokens.includes(token)) {
+      // Якщо токен новий — надсилаємо повідомлення
+      const botToken = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
+      const chat_id = "751873408";
+      const message = `🔐 Користувач увійшов через Google: ${name}`;
+
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chat_id, text: message })
+      });
+
+      loggedGoogleTokens.push(token);
+      localStorage.setItem('loggedGoogleTokens', JSON.stringify(loggedGoogleTokens));
+    }
+
+    localStorage.setItem('loggedInGoogleToken', token);
 
     window.location.href = "success.html";
   } catch (e) {
     document.getElementById("status").innerText = "Помилка при вході через Google.";
   }
 }
-
-
 
 function login() {
   const loginInput = document.getElementById("login").value.trim().toLowerCase();
@@ -39,18 +53,25 @@ function login() {
 
   let users = JSON.parse(localStorage.getItem("users")) || {};
 
-  if (users[loginInput] && users[loginInput] === passwordInput) {
+  if (users[loginInput] && users[loginInput].password === passwordInput) {
     localStorage.setItem("loggedIn", loginInput);
 
-    const token = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
-    const chat_id = "751873408";
-    const message = `🔐 Користувач увійшов: ${loginInput}`;
+    // Перевірка, чи повідомлення вже надсилалось раніше для цього користувача
+    let loggedInUsers = JSON.parse(localStorage.getItem('loggedInUsers') || '[]');
+    if (!loggedInUsers.includes(loginInput)) {
+      const botToken = "8102622568:AAEGVR7H4HtOvL1IzI2M9wOvC6WQSa2qikg";
+      const chat_id = "751873408";
+      const message = `🔐 Користувач увійшов: ${loginInput}`;
 
-    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chat_id, text: message })
-    });
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chat_id, text: message })
+      });
+
+      loggedInUsers.push(loginInput);
+      localStorage.setItem('loggedInUsers', JSON.stringify(loggedInUsers));
+    }
 
     window.location.href = "success.html";
   } else {
