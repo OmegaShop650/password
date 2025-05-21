@@ -10,15 +10,21 @@ document.getElementById('login').addEventListener('input', function (e) {
 });
 
 function handleCredentialResponse(response) {
-  // Тут можна обробити JWT токен (response.credential)
-  alert("Google Sign-In успішний! Токен: " + response.credential);
-  localStorage.setItem('loggedInGoogleToken', response.credential);
+  try {
+    const token = response.credential;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const name = payload.name || "Користувач";
+    document.getElementById("status").innerText = `Вхід як ${name}`;
+    localStorage.setItem('loggedInGoogleToken', token);
 
-  // Очищаємо URL від хешу з токеном, щоб уникнути помилок
-  history.replaceState(null, null, window.location.pathname);
+    history.replaceState(null, null, window.location.pathname);
 
-  window.location.href = "success.html";
+    window.location.href = "success.html";
+  } catch (e) {
+    document.getElementById("status").innerText = "Помилка при вході через Google.";
+  }
 }
+
 
 
 function login() {
