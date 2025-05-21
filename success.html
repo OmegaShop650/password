@@ -5,30 +5,22 @@
   <title>Успішний вхід | OmegaShop</title>
 </head>
 <body>
-  <h1>Вітаємо, ви успішно увійшли!</h1>
-  <p id="user-info"></p>
+  <h1>Успішний вхід!</h1>
+  <p id="welcome-message"></p>
 
   <script>
-    // Перевірка логіну через звичайний акаунт
-    const loginUser = localStorage.getItem('loggedIn');
-
-    // Перевірка Google токена
-    const googleToken = localStorage.getItem('loggedInGoogleToken');
-
-    const userInfo = document.getElementById('user-info');
-
-    if (loginUser) {
-      userInfo.textContent = `Привіт, ${loginUser}! Ви увійшли через звичайну форму.`;
-    } else if (googleToken) {
-      // Декодуємо JWT для отримання імені
-      try {
-        const payload = JSON.parse(atob(googleToken.split('.')[1]));
-        userInfo.textContent = `Привіт, ${payload.name || "користувачу"}! Ви увійшли через Google.`;
-      } catch {
-        userInfo.textContent = "Вітаємо! Ви увійшли через Google.";
-      }
+    // Якщо користувач увійшов через Google
+    const googleName = localStorage.getItem('loggedInGoogleName');
+    if (googleName) {
+      document.getElementById('welcome-message').textContent = `Вітаємо, ${googleName}! Ви увійшли через Google.`;
     } else {
-      userInfo.textContent = "Ви не увійшли. Будь ласка, авторизуйтесь.";
+      // Якщо увійшов через локальний логін
+      const login = localStorage.getItem('loggedIn');
+      if (login) {
+        document.getElementById('welcome-message').textContent = `Вітаємо, ${login}! Ви увійшли.`;
+      } else {
+        document.getElementById('welcome-message').textContent = "Ви не увійшли.";
+      }
     }
   </script>
 </body>
